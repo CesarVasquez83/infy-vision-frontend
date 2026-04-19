@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pandas
+requests
+transformers
+pillow
+python-multipart
+openai
+azure-ai-vision-imageanalysis
+python-dotenv
+sqlalchemy
+psycopg2-binary
+openpyxl

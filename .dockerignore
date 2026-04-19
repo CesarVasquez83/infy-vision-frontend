@@ -1,0 +1,38 @@
+# Entornos virtuales
+venv
+env
+.venv
+*.pyc
+__pycache__/
+
+# Control de versiones
+.git
+.gitignore
+
+# Configuración local
+.env
+*.log
+
+# Datos y modelos pesados (ajusta según tu repo)
+data/
+datasets/
+logs/
+checkpoints/
+models/
+model_store/
+*.pt
+*.bin
+*.ckpt
+
+# Archivos de sistema / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Cachés de Python y otros
+.mypy_cache/
+.pytest_cache/
+.cache/
+pip-wheel-metadata/

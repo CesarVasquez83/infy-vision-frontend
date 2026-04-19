@@ -1,0 +1,33 @@
+services:
+  db_infy:
+    image: postgres:16
+    container_name: infy-db
+    environment:
+      POSTGRES_DB: infy_vision
+      POSTGRES_USER: infy_user
+      POSTGRES_PASSWORD: infy_password
+    volumes:
+      - infy-db-data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - infy-net
+
+  infy-vision:
+    build: .
+    image: infy-vision:latest
+    container_name: infy-vision
+    depends_on:
+      - db_infy
+    env_file:
+      - .env.docker
+    ports:
+      - "8000:8000"
+    networks:
+      - infy-net
+
+networks:
+  infy-net:
+
+volumes:
+  infy-db-data:

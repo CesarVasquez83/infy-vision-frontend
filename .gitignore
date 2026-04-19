@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Entorno
+.env
+.env.docker
+.env.local
+
+# Base de datos local
+*.db
+*.sqlite3
+
+# Docker
+*.log
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# VS Code
+.vscode/
+
+# WSL / Windows
+Thumbs.db
+.DS_Store
+
+# Excel/datos sensibles
+*.xlsx
+*.xls
+logs.txt
+test_images/

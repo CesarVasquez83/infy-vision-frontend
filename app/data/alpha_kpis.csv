@@ -1,0 +1,14 @@
+PROYECTO,MARCO,DIMENSION,KPI,DENOMINACIÓN DE KPI,VALOR,UNIDAD,UMBRAL_VERDE,UMBRAL_AMARILLO,ESTADO,QUE MIDE
+Alpha,Predictivo,Tiempo,SV,Varianza de cronograma,15.0,USD  ,0,-10.0,Verde,Diferencia en días/semanas entre el avance real y el planificado
+Alpha,Predictivo,Tiempo,SPI,Indice de desempeño de cronograma,1.25,ratio,1,0.85,Verde,Eficiencia del cronograma: cuánto avance real se obtuvo por cada unidad planificada
+Alpha,Predictivo,Costo,CV,Varianza de costo,5.0,USD  ,0,-5.0,Verde,Diferencia monetaria entre el valor ganado y el costo real incurrido
+Alpha,Predictivo,Costo,CPI,Indice de desempeño de costo,1.07,ratio,1,0.95,Verde,Eficiencia del costo: cuánto valor se genera por cada unidad monetaria gastada
+Alpha,Predictivo,Alcance,SCOPE_DEL,% Alcance entregado según plan,75.0,%,90,75.0,Amarillo,Porcentaje del alcance comprometido que ha sido entregado conforme al plan
+Alpha,Predictivo,Gobernanza,CR_RATE,% Cambios de alcance aprobados,80.0,%,40,60.0,Amarillo,Porcentaje de solicitudes de cambio de alcance que fueron aprobadas formalmente
+Alpha,Predictivo,Alcance,FORMAL_DEL,% Entregables con aprobación formal,90.0,%,90,80.0,Verde,Porcentaje de entregables que cuentan con aceptación formal del cliente o sponsor
+Alpha,Predictivo,Riesgos,UNPLANNED_RISK,Riesgos no identificados al inicio,2.0,n°,0,1.0,Rojo,Cantidad de riesgos materializados que no estaban en el registro inicial
+Alpha,Predictivo,Calidad,REWORK_PCT,"Indice de retrabajo, pruebas fallidas",10.0,%,10,20.0,Verde,Porcentaje o cantidad de trabajo que debió rehacerse por defectos o pruebas fallidas
+Alpha,Predictivo,Costo,BAC,Presupuesto,100.0,USD  ,0,0.0,Verde,Presupuesto total autorizado para completar el proyecto
+Alpha,Predictivo,Costo,PV,Valor planeado,60.0,USD  ,0,0.0,Verde,Valor del trabajo que debería estar completado a la fecha según el cronograma
+Alpha,Predictivo,Costo,EV,Valor ganado,75.0,USD  ,0,0.0,Verde,"Valor del trabajo efectivamente completado a la fecha, expresado en términos presupuestarios"
+Alpha,Predictivo,Costo,AC,Costo real,70.0,USD  ,0,0.0,Verde,Costo real incurrido por el trabajo completado hasta la fecha de corte
