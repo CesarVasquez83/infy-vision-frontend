@@ -1,0 +1,60 @@
+<div class="panel">
+
+  <h3>🧠 Context Engine</h3>
+
+  <!-- RADAR -->
+  <div class="radar">
+    <svg viewBox="0 0 200 200">
+
+      <!-- Grillas -->
+      <circle cx="100" cy="100" r="80" class="grid"></circle>
+      <circle cx="100" cy="100" r="53" class="grid"></circle>
+      <circle cx="100" cy="100" r="27" class="grid"></circle>
+
+      <!-- Ejes -->
+      <line *ngFor="let axis of axisLines"
+        [attr.x1]="100" [attr.y1]="100"
+        [attr.x2]="axis.x" [attr.y2]="axis.y"
+        class="axis-line">
+      </line>
+
+      <!-- Polígono -->
+      <polygon
+        [attr.points]="radarPoints"
+        class="radar-shape">
+      </polygon>
+
+      <!-- Labels -->
+      <text *ngFor="let label of axisLabels"
+        [attr.x]="label.x"
+        [attr.y]="label.y"
+        class="axis-label">
+        {{ label.text }}
+      </text>
+
+    </svg>
+  </div>
+
+  <!-- DRIFT -->
+  <div class="metric">
+    <label>Context Drift</label>
+    <div class="bar">
+      <div class="fill"
+        [style.width.%]="driftScore">
+      </div>
+    </div>
+    <span>{{ driftScore | number:'1.0-0' }}%</span>
+  </div>
+
+  <!-- CONFIDENCE -->
+  <div class="metric">
+    <label>Recommendation Confidence</label>
+    <div class="bar">
+      <div class="fill confidence"
+        [style.width.%]="confidenceScore">
+      </div>
+    </div>
+    <span>{{ confidenceScore }}%</span>
+  </div>
+
+</div>

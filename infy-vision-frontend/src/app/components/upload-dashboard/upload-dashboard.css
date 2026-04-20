@@ -1,0 +1,169 @@
+
+/* ─── PREVIEW DE IMAGEN ──────────────────────────────────── */
+.image-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.image-preview label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.preview-img {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+/* ─── IMAGEN ANALIZADA ───────────────────────────────────── */
+.analyzed-image-section {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.analyzed-image-section h4 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #374151;
+  font-weight: 700;
+}
+
+.analyzed-img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+/* ─── TABLA KPIs CON COLORES ─────────────────────────────── */
+.tabla-section {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.tabla-section h4 {
+  margin: 0 0 16px;
+  font-size: 15px;
+  color: #374151;
+  font-weight: 700;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+.kpi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.kpi-table th {
+  background: #f3f4f6;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.kpi-table td {
+  padding: 10px 12px;
+  border-top: 1px solid #f3f4f6;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.kpi-table tr:hover td {
+  background: #f9fafb;
+}
+
+.kpi-code {
+  font-weight: 700;
+  color: #1d4ed8;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.kpi-valor {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* ─── ESTADO BADGES ──────────────────────────────────────── */
+.estado-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  min-width: 60px;
+}
+
+.estado-verde {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.estado-amarillo {
+  background: #fef9c3;
+  color: #a16207;
+  border: 1px solid #fde047;
+}
+
+.estado-rojo {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.estado-info {
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+
+/* ─── RISK SECTION ───────────────────────────────────────── */
+.risk-section {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.risk-section h4 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #be123c;
+  font-weight: 700;
+}
+
+.risk-section ul {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.risk-section li {
+  font-size: 14px;
+  color: #9f1239;
+  line-height: 1.5;
+}

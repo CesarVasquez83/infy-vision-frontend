@@ -1,0 +1,26 @@
+<h2>Histórico de Análisis</h2>
+
+<div *ngIf="loading">Cargando...</div>
+
+<div *ngIf="error" style="color: red;">{{ error }}</div>
+
+<table *ngIf="!loading && !error">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Archivo</th>
+      <th>Fecha</th>
+      <th>Detalle</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of analisis">
+      <td>{{ item.id }}</td>
+      <td>{{ item.filename }}</td>
+      <td>{{ item.creado_en | date:'short' }}</td>
+      <td>
+        <a [routerLink]="['/analisis', item.id]">Ver</a>
+      </td>
+    </tr>
+  </tbody>
+</table>

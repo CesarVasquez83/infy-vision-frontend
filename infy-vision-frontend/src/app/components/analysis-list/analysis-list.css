@@ -1,0 +1,24 @@
+/* Aumentar fuente general del contenedor */
+.analysis-list-container {
+  font-size: 16px;      /* súbelo a 18px si quieres “modo PMO” */
+}
+
+/* Tabla del histórico más legible */
+.analysis-table {
+  font-size: 15px;
+}
+
+.analysis-table th {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.analysis-table td {
+  font-size: 15px;
+  padding: 8px 12px;
+}
+
+/* Botón/enlace "Ver" más grande */
+.analysis-table a {
+  font-size: 15px;
+}
