@@ -1,5 +1,6 @@
 import os
 import enum
+import logging
 from datetime import datetime
 
 from dotenv import load_dotenv
@@ -18,10 +19,13 @@ from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 ENABLE_DB = os.getenv("ENABLE_DB", "false").lower() == "true"
 
 Base = declarative_base()
+
 
 # Enum de tipos de evento de visión
 class VisionEventType(str, enum.Enum):
@@ -42,7 +46,6 @@ class AnalisisDashboard(Base):
     analisis_pm = Column(JSONB, nullable=False)
     creado_en = Column(DateTime, default=datetime.utcnow)
 
-    # relación con logs (opcional, pero útil)
     logs = relationship("VisionRequestsLog", back_populates="analisis")
 
 
@@ -64,21 +67,56 @@ class VisionRequestsLog(Base):
     analisis = relationship("AnalisisDashboard", back_populates="logs")
 
 
-# Solo se crea el engine si DB está habilitada
-engine = create_engine(DATABASE_URL) if ENABLE_DB else None
-SessionLocal = (
-    sessionmaker(autocommit=False, autoflush=False, bind=engine) if ENABLE_DB else None
-)
+# ── Lazy init — el engine se crea solo cuando se necesita ─────────────────────
+_engine = None
+_SessionLocal = None
+
+
+def get_engine():
+    global _engine
+    if _engine is None and ENABLE_DB and DATABASE_URL:
+        try:
+            _engine = create_engine(
+                DATABASE_URL,
+                pool_pre_ping=True,       # verifica conexión antes de usar
+                connect_args={"sslmode": "require"} if "supabase" in (DATABASE_URL or "") else {},
+            )
+            logger.info("DB engine creado correctamente.")
+        except Exception as e:
+            logger.error(f"Error creando DB engine: {e}")
+            _engine = None
+    return _engine
+
+
+def get_session_local():
+    global _SessionLocal
+    engine = get_engine()
+    if _SessionLocal is None and engine is not None:
+        _SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return _SessionLocal
 
 
 def init_db():
     if not ENABLE_DB:
         return
-    Base.metadata.create_all(bind=engine)
+    engine = get_engine()
+    if engine is None:
+        logger.warning("init_db: engine no disponible, se omite creación de tablas.")
+        return
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Tablas creadas/verificadas correctamente.")
+    except Exception as e:
+        logger.error(f"Error en init_db: {e}")
 
 
 def get_db_optional():
     if not ENABLE_DB:
+        yield None
+        return
+    SessionLocal = get_session_local()
+    if SessionLocal is None:
+        logger.warning("get_db_optional: SessionLocal no disponible.")
         yield None
         return
     db = SessionLocal()
