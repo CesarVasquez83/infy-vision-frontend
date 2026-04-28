@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InfyVisionApiService } from '../../services/infy-vision-api';
@@ -23,17 +23,18 @@ export class UploadDashboard {
   observaciones: string[] = [];
   recomendaciones: string[] = [];
   riesgos: string[] = [];
-
-  // Preview de imagen
+  quickReading: string = '';
   imagePreviewUrl: string | null = null;
 
-  constructor(private api: InfyVisionApiService) {}
+  constructor(
+    private api: InfyVisionApiService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
+  ) {}
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedFile = input.files?.[0] ?? null;
-
-    // Generar preview URL
     if (this.selectedFile) {
       if (this.imagePreviewUrl) {
         URL.revokeObjectURL(this.imagePreviewUrl);
@@ -55,71 +56,50 @@ export class UploadDashboard {
 
     this.api.uploadDashboardImage(this.selectedFile, this.descripcion).subscribe({
       next: (res) => {
-        this.result = res;
-        this.loading = false;
+        this.ngZone.run(() => {
+          this.result = res;
+          this.loading = false;
+          this.quickReading = (res as any)?.standard?.descripcion_horizontal?.quick_reading ?? '';
 
-        // Extraer tabla de KPIs — soporta tanto array directo como nested bajo kpi_table
-        const descH = (res as any)?.standard?.descripcion_horizontal ?? {};
-        const kpis: any[] = Array.isArray(descH)
-          ? descH
-          : (descH.tabla_kpis ?? descH.kpi_table ?? descH.tabla ?? []);
+          const descH = (res as any)?.standard?.descripcion_horizontal ?? {};
+          const kpis: any[] = Array.isArray(descH)
+            ? descH
+            : (descH.tabla_kpis ?? descH.kpi_table ?? descH.tabla ?? []);
 
-        this.tablaSuperior = kpis.map((kpi: any) => ({
-          proyecto:       kpi.proyecto,
-          marco:          kpi.marco,
-          dimension:      kpi.dimension,
-          kpi:            kpi.kpi,
-          denominacion:   kpi.denominacion_kpi ?? kpi.denominacion_de_kpi,
-          valor:          kpi.valor,
-          unidad:         kpi.unidad,
-          umbralVerde:    kpi.umbral_verde,
-          umbralAmarillo: kpi.umbral_amarillo,
-          estado:         kpi.estado,
-          queMide:        kpi.que_mide
-        }));
+          this.tablaSuperior = kpis.map((kpi: any) => ({
+            proyecto:       kpi.proyecto,
+            marco:          kpi.marco,
+            dimension:      kpi.dimension,
+            kpi:            kpi.kpi,
+            denominacion:   kpi.denominacion_kpi ?? kpi.denominacion_de_kpi,
+            valor:          kpi.valor,
+            unidad:         kpi.unidad,
+            umbralVerde:    kpi.umbral_verde,
+            umbralAmarillo: kpi.umbral_amarillo,
+            estado:         kpi.estado,
+            queMide:        kpi.que_mide
+          }));
 
-        // Extraer textos del analisis_experto
-        const experto = (res as any)?.standard?.analisis_experto ?? {};
-        this.observaciones = [];
-        this.recomendaciones = [];
-        this.riesgos = [];
+          const experto = (res as any)?.standard?.analisis_experto ?? {};
 
-        const extraerStrings = (val: any): string[] => {
-          if (typeof val === 'string') return [val];
-          if (Array.isArray(val)) return val.filter(s => typeof s === 'string');
-          if (typeof val === 'object' && val !== null)
-            return Object.values(val).filter(s => typeof s === 'string') as string[];
-          return [];
-        };
+          this.observaciones = Array.isArray(experto.observaciones)
+            ? experto.observaciones
+            : experto.observaciones_generales
+              ? [experto.observaciones_generales]
+              : [];
 
-        const EXCLUIR = ['indices_idoneidad', 'tendencias_agil', 'observaciones_suitability'];
+          this.recomendaciones = Array.isArray(experto.recomendaciones) ? experto.recomendaciones : [];
+          this.riesgos = Array.isArray(experto.riesgos) ? experto.riesgos : [];
 
-        for (const [key, val] of Object.entries(experto)) {
-          if (EXCLUIR.includes(key)) continue;
-          if (key === 'recomendaciones' || key === 'recomendacion')
-            this.recomendaciones.push(...extraerStrings(val));
-          else if (key === 'riesgos' || key === 'riesgos_identificados')
-            this.riesgos.push(...extraerStrings(val));
-          else if (typeof val === 'string')
-            this.observaciones.push(val);
-        }
-
-        for (const [seccionKey, seccion] of Object.entries(experto)) {
-          if ([...EXCLUIR, 'recomendaciones', 'recomendacion', 'riesgos', 'riesgos_identificados'].includes(seccionKey)) continue;
-          if (typeof seccion !== 'object' || seccion === null || Array.isArray(seccion)) continue;
-          for (const [key, val] of Object.entries(seccion as any)) {
-            if (key === 'recomendaciones' || key === 'recomendacion')
-              this.recomendaciones.push(...extraerStrings(val));
-            else if (key === 'riesgos')
-              this.riesgos.push(...extraerStrings(val));
-            else
-              this.observaciones.push(...extraerStrings(val));
-          }
-        }
+          this.cdr.detectChanges();
+        });
       },
       error: () => {
-        this.error = 'Error al analizar el dashboard.';
-        this.loading = false;
+        this.ngZone.run(() => {
+          this.error = 'Error al analizar el dashboard.';
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -134,12 +114,11 @@ export class UploadDashboard {
     return 'bad';
   }
 
-  // Clase CSS según estado del KPI
   getEstadoClass(estado: string): string {
     const e = (estado ?? '').toLowerCase();
-    if (e === 'verde' || e === 'green')   return 'estado-verde';
+    if (e === 'verde' || e === 'green')     return 'estado-verde';
     if (e === 'amarillo' || e === 'yellow') return 'estado-amarillo';
-    if (e === 'rojo' || e === 'red')      return 'estado-rojo';
+    if (e === 'rojo' || e === 'red')        return 'estado-rojo';
     return 'estado-info';
   }
 
@@ -163,5 +142,26 @@ export class UploadDashboard {
       team_size: 'Tamaño del Equipo'
     };
     return labels[key] ?? key;
+  }
+
+  suitabilityFloro(key: string): string {
+    const floros: { [k: string]: string } = {
+      experience: 'ALTO = (Predictivo, poca experiencia en ágil) / BAJO = (Ágil, más experiencia en entornos ágiles)',
+      access: 'ALTO = (Predictivo, menos acceso a cliente) / BAJO = (Ágil, hay mayor acceso a cliente)',
+      trust: 'BAJO = (Ágil, mayor confianza en el equipo) / ALTO = (Predictivo, falta de confianza en el equipo)',
+      decision: 'BAJO = (Ágil, decisiones rápidas distribuidas) / ALTO = (jerárquico, más predictivo)',
+      buy_in: 'ALTO = (Predictivo, poca aceptación de autonomía del team) / BAJO = (Ágil, aceptan autonomía del equipo)',
+      team_size: 'BAJO = (Ágil; se maneja grupos pequeños) / ALTO = (Predictivo, generalmente grupos numerosos)',
+      changes: 'BAJO = (Ágil; alta incertidumbre) / ALTO = (Predictivo, debido a pocos cambios)',
+      criticality: 'ALTO = (Predictivo, riesgo alto) / BAJO = (Ágil; tolerante a error)',
+      delivery: 'BAJO = (Ágil, prueba entrega incremental) / ALTO = (Predictivo, prefiere única entrega)',
+    };
+    return floros[key] ?? '';
+  }
+
+  formatKpiKey(key: string): string {
+    return key
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
   }
 }
