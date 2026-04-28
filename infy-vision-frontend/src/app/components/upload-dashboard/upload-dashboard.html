@@ -15,7 +15,6 @@
       <span *ngIf="selectedFile" class="file-name">📎 {{ selectedFile.name }}</span>
     </div>
 
-    <!-- PREVIEW DE IMAGEN -->
     <div class="image-preview" *ngIf="imagePreviewUrl">
       <label>Vista previa</label>
       <img [src]="imagePreviewUrl" alt="Dashboard seleccionado" class="preview-img" />
@@ -60,32 +59,32 @@
 
     <!-- CABECERA -->
     <div class="result-header">
-      <span class="badge">{{ result.mode }}</span>
-      <h3>{{ result.elite.approach_infy }}</h3>
-      <p class="veredicto">{{ result.elite.veredicto }}</p>
-    </div>
 
-    <!-- META INFO -->
-    <div class="meta-grid">
-      <div class="meta-item">
-        <label>Framework detectado</label>
-        <span>{{ result.elite.framework_detectado ?? 'No detectado' }}</span>
+      <div class="header-top">
+        <span class="badge-mode">{{ result.mode }}</span>
+        <span class="badge-confianza">🎯 Confianza de lectura: {{ result.elite.confianza_lectura }}</span>
       </div>
-      <div class="meta-item">
-        <label>Confianza de lectura</label>
-        <span>{{ result.elite.confianza_lectura }}</span>
-      </div>
-      <div class="meta-item" *ngIf="result.elite.suitability_mismatch">
-        <label>⚠️ Nota</label>
-        <span>{{ result.elite.suitability_note }}</span>
-      </div>
-    </div>
 
-    <!-- FLAGS -->
-    <div class="flags">
-      <span class="flag" [class.active]="result.elite.suitability_more_pred">✅ Más Predictivo</span>
-      <span class="flag" [class.active]="result.elite.suitability_less_pred">✅ Más Ágil</span>
-      <span class="flag warn" [class.active]="result.elite.suitability_mismatch">⚠️ Mismatch</span>
+      <div class="framework-row">
+        <div class="framework-box">
+          <span class="fw-label">Framework detectado</span>
+          <span class="fw-value">{{ result.elite.framework_detectado ?? 'No detectado' }}</span>
+        </div>
+        <div class="arrow-sep">→</div>
+        <div class="idoneidad-box">
+          <span class="fw-label">Según análisis de idoneidad</span>
+          <span class="fw-value idoneidad-value">Tendencia a {{ result.elite.approach_infy }}</span>
+        </div>
+      </div>
+
+      <div class="veredicto-banner"
+        [class.veredicto-match]="!result.elite.suitability_mismatch && !result.elite.suitability_more_pred && !result.elite.suitability_less_pred"
+        [class.veredicto-more]="result.elite.suitability_more_pred && !result.elite.suitability_mismatch"
+        [class.veredicto-less]="result.elite.suitability_less_pred && !result.elite.suitability_mismatch"
+        [class.veredicto-mismatch]="result.elite.suitability_mismatch">
+        {{ result.elite.veredicto }}
+      </div>
+
     </div>
 
     <!-- TABLA KPIs CON COLORES -->
@@ -124,15 +123,22 @@
     <!-- SUITABILITY INDEXES -->
     <div class="indexes-section">
       <h4>Suitability Indexes</h4>
+      <div class="suit-legend">
+        <span class="legend-agil">● Ágil (1–4)</span>
+        <span class="legend-hib">● Híbrido (5–8)</span>
+        <span class="legend-pred">● Predictivo (9–10)</span>
+      </div>
       <div class="index-grid">
-        <div
-          class="index-item"
-          *ngFor="let key of suitabilityKeys()">
-          <label>{{ suitabilityLabel(key) }}</label>
-          <div class="bar">
-            <div class="fill" [style.width.%]="toNumber(result.elite.suitability_indexes[key]) * 10"></div>
+        <div class="index-item" *ngFor="let key of suitabilityKeys()">
+          <div class="index-header">
+            <label>{{ suitabilityLabel(key) }}</label>
+            <span class="index-valor">{{ toNumber(result.elite.suitability_indexes[key]) }}/10</span>
           </div>
-          <span>{{ result.elite.suitability_indexes[key] ?? '—' }}</span>
+          <div class="bar-wrapper">
+            <div class="bar-bg"></div>
+            <div class="bar-mask" [style.width.%]="100 - toNumber(result.elite.suitability_indexes[key]) * 10"></div>
+          </div>
+          <small class="floro">{{ suitabilityFloro(key) }}</small>
         </div>
       </div>
     </div>
@@ -142,7 +148,7 @@
       <h4>KPIs Detectados</h4>
       <div class="kpi-grid">
         <div class="kpi-item" *ngFor="let kpi of kpis">
-          <span class="kpi-name">{{ kpi.key }}</span>
+          <span class="kpi-name">{{ formatKpiKey(kpi.key) }}</span>
           <span class="kpi-value">{{ kpi.value }}</span>
         </div>
       </div>
@@ -167,9 +173,9 @@
     </div>
 
     <!-- NOTAS DE LECTURA -->
-    <div class="notas-section" *ngIf="result.elite.notas_lectura">
+    <div class="notas-section" *ngIf="quickReading">
       <h4>Notas de Lectura</h4>
-      <p>{{ result.elite.notas_lectura }}</p>
+      <p class="quick_reading">{{ quickReading }}</p>
     </div>
 
     <!-- CONTEXT ENGINE PANEL -->
