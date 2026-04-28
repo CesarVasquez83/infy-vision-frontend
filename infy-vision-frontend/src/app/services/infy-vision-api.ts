@@ -6,7 +6,7 @@ import { EliteResponse, AnalysisListItem } from '../models/analysis.models';
 
 @Injectable({ providedIn: 'root' })
 export class InfyVisionApiService {
-  private readonly baseUrl = 'http://infy-vision.eastus.azurecontainer.io:8000';
+  private readonly baseUrl = 'https://infy-vision-backend.jollyforest-eba4f0d9.eastus.azurecontainerapps.io';
 
   constructor(private http: HttpClient) {}
 
