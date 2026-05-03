@@ -33,12 +33,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
-      - name: Install and Build
-        run: |
-          cd infy-vision-frontend
-          npm ci
-          npm run build -- --configuration production
+          node-version: '20'    
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
