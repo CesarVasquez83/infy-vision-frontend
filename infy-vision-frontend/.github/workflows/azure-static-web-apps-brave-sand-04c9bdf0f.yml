@@ -44,9 +44,9 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_SAND_04C9BDF0F }}
           action: "upload"
-          app_location: "dist/infy-vision/browser"
+          app_location: "infy-vision-frontend"
           api_location: ""
-          output_location: ""
+          output_location: "dist/infy-vision/browser"
           skip_app_build: true
           github_id_token: ${{ steps.idtoken.outputs.result }}
   close_pull_request_job:
