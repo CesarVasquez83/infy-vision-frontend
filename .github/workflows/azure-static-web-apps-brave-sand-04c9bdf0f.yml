@@ -36,6 +36,7 @@ jobs:
           node-version: '20'
       - name: Install and Build
         run: |
+          cd infy-vision-frontend
           npm ci
           npm run build -- --configuration production
       - name: Build And Deploy
@@ -47,7 +48,6 @@ jobs:
           app_location: "infy-vision-frontend"
           api_location: ""
           output_location: "dist/infy-vision/browser"
-          skip_app_build: true
           github_id_token: ${{ steps.idtoken.outputs.result }}
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
