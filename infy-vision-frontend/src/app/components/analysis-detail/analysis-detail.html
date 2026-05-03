@@ -1,1 +1,69 @@
-<p>analysis-detail works!</p>
+<div *ngIf="analisis" class="detalle">
+
+  <h2>Análisis #{{ analisis.id }} — {{ analisis.filename }}</h2>
+  <p><strong>Fecha:</strong> {{ analisis.creado_en | date:'medium' }}</p>
+
+  <!-- SUITABILITY -->
+  <div *ngIf="analisis.analisis_pm?.descripcion_horizontal?.suitability_indexes" class="seccion">
+    <h3>📐 Suitability Indexes</h3>
+    <div class="barras">
+      <div *ngFor="let item of suitabilityItems()" class="barra-item">
+        <div class="barra-label">{{ item.label }}</div>
+        <div class="barra-track">
+          <div class="barra-fill" [style.width.%]="item.valor * 10" [class]="item.color"></div>
+        </div>
+        <div class="barra-valor">{{ item.valor }}</div>
+        <div class="barra-floro">{{ item.floro }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div *ngIf="analisis.analisis_pm?.descripcion_horizontal?.tabla_kpis" class="seccion">
+    <h3>📊 KPIs Detectados</h3>
+    <table class="tabla-kpis">
+      <thead>
+        <tr>
+          <th>KPI</th>
+          <th>Denominación</th>
+          <th>Dimensión</th>
+          <th>Valor</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let kpi of analisis.analisis_pm.descripcion_horizontal.tabla_kpis">
+          <td><strong>{{ kpi.kpi }}</strong></td>
+          <td>{{ kpi.denominacion_de_kpi }}</td>
+          <td>{{ kpi.dimension }}</td>
+          <td>{{ kpi.valor }} {{ kpi.unidad }}</td>
+          <td [class]="'estado-' + kpi.estado?.toLowerCase()">{{ kpi.estado }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ANALISIS EXPERTO -->
+  <div *ngIf="analisis.analisis_pm?.analisis_experto" class="seccion">
+    <h3>🔍 Análisis Experto</h3>
+    <div *ngIf="observacionesFiltradas().length > 0">
+      <h4>Observaciones</h4>
+      <ul>
+        <li *ngFor="let obs of observacionesFiltradas()">{{ obs }}</li>
+      </ul>
+    </div>
+    <div *ngIf="analisis.analisis_pm.analisis_experto.recomendaciones">
+      <h4>Recomendaciones</h4>
+      <ul>
+        <li *ngFor="let rec of analisis.analisis_pm.analisis_experto.recomendaciones">{{ rec }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FALLBACK estructura vieja -->
+  <div *ngIf="!analisis.analisis_pm?.descripcion_horizontal && !analisis.analisis_pm?.analisis_experto" class="seccion">
+    <h3>📋 Datos del análisis</h3>
+    <pre>{{ analisis.analisis_pm | json }}</pre>
+  </div>
+
+</div>
